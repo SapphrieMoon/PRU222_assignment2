@@ -1,0 +1,28 @@
+﻿@* @page
+@model Assignment2.Pages.Account.LoginModel
+@{
+} *@
+
+@page
+@model Assignment2.Pages.Account.LoginModel
+
+<h1>Login</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="LoginDTO.Email"></label>
+        <input asp-for="LoginDTO.Email" class="form-control" />
+        <span asp-validation-for="LoginDTO.Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LoginDTO.Password"></label>
+        <input asp-for="LoginDTO.Password" type="password" class="form-control" />
+        <span asp-validation-for="LoginDTO.Password" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
