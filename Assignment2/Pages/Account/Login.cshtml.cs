@@ -38,6 +38,7 @@ namespace Assignment2.Pages.Account
 
             // Lưu thông tin đăng nhập (Session/Cookie)
             HttpContext.Session.SetInt32("AccountId", account.AccountId);
+            HttpContext.Session.SetInt32("AccountRole", account.AccountRole);
             return RedirectToPage("/Index");
         }
     }

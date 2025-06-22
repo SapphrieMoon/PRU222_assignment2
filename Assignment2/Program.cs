@@ -16,6 +16,17 @@ namespace Assignment2
             // Add services to the container.
             builder.Services.AddRazorPages();
 
+            // Cấu hình Session
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // Thời gian hết hạn session
+                options.Cookie.HttpOnly = true; // Bảo mật cookie
+                options.Cookie.IsEssential = true; // Luôn sử dụng session
+            });
+
+            // Đăng ký IHttpContextAccessor để sử dụng Session trong PageModel
+            builder.Services.AddHttpContextAccessor();
+
             // Tạo và cấu hình DbContext với SQL Server
             builder.Services.AddDbContext<NewsContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -37,11 +48,15 @@ namespace Assignment2
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            // Thêm middleware Session vào pipeline (QUAN TRỌNG)
+            app.UseSession();
+
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.MapRazorPages();
+
 
             app.Run();
         }
