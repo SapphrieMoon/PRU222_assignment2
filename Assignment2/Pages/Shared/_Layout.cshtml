@@ -19,13 +19,58 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+                        <!-- Hiển thị cho tất cả role -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                            <a class="nav-link text-dark" asp-page="/Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
+
+                        <!-- Hiển thị theo role -->
+                        @if (Context.Session.GetInt32("AccountRole") != null)
+                        {
+                            var role = Context.Session.GetInt32("AccountRole");
+
+                            <!-- Role 1 (Staff) -->
+                            @if (role == 1)
+                            {
+                                
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/Category/Manage">Manage Category</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/News/Manage">Manage News</a>
+                                </li>
+                            }
+
+                            <!-- Role 2 (Lecturer) -->
+                            @if (role == 2)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/News/Index">News Articles</a>
+                                </li>
+                            }
+
+                            <!-- Role 3 (Admin) -->
+                            @if (role == 3)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/Account/Manage">Manage Account</a>
+                                </li>
+                            }
+                        }
                     </ul>
+
+                    <!-- Hiển thị nút Logout nếu đã đăng nhập -->
+                    @if (Context.Session.GetInt32("AccountId") != null)
+                    {
+                        <form asp-page="/Account/Logout" method="post">
+                            <button type="submit" class="btn btn-outline-danger">Logout</button>
+                        </form>
+                    }else
+                    {
+                        <form asp-page="/Account/Login" method="get">
+                            <button type="submit" class="btn btn-outline-primary">Login</button>
+						</form>
+                    }
                 </div>
             </div>
         </nav>
