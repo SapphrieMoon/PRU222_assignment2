@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace BLL.DTOs
 {
-    public class TagDTO
-    {
+   
         public class CreateTagDTO
         {
             public required string TagName { get; set; }
@@ -16,15 +15,16 @@ namespace BLL.DTOs
 
         public class UpdateTagDTO
         {
+            public int TagId { get; set; }
             public string? TagName { get; set; }
             public string? Note { get; set; }
         }
 
-        public class TagResponseDTO
+        public class TagDTO
         {
             public int TagId { get; set; }
             public required string TagName { get; set; }
             public required string Note { get; set; }
         }
-    }
+    
 }

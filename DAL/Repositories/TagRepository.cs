@@ -19,12 +19,12 @@ namespace DAL.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<Entities.Tag>> GetAllAsyncs()
+        public async Task<IEnumerable<Tag>> GetAllAsyncs()
         {
             return await _context.Tags.ToListAsync();
         }
 
-        public async Task<Entities.Tag?> GetByIdAsync(int id)
+        public async Task<Tag?> GetByIdAsync(int id)
         {
             return await _context.Tags.FindAsync(id);
         }
