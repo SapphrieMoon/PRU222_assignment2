@@ -47,4 +47,5 @@ namespace DAL.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+    }
 }
