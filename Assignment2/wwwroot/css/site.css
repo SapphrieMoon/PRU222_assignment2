@@ -20,3 +20,23 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Custom styles */
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.card {
+    border-radius: 0.5rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+/* Fix for form-switch */
+.form-switch .form-check-input {
+    width: 3em;
+    height: 1.5em;
+}
