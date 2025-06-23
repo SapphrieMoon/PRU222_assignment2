@@ -1,0 +1,53 @@
+﻿@page
+@model Assignment2.Pages.Category.DetailModel
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-4">ID</dt>
+                <dd class="col-sm-8">@Model.Category.CategoryId</dd>
+
+                <dt class="col-sm-4">Name</dt>
+                <dd class="col-sm-8">@Model.Category.CategoryName</dd>
+
+                <dt class="col-sm-4">Description</dt>
+                <dd class="col-sm-8">@Model.Category.CategoryDescription</dd>
+
+                <dt class="col-sm-4">Parent Category</dt>
+                <dd class="col-sm-8">
+                    @if (Model.Category.ParentCategoryId > 0)
+                    {
+                        <span>@Model.ParentCategoryName</span>
+                    }
+                    else
+                    {
+                        <span>None</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8">
+                    @if (Model.Category.IsActive == true)
+                    {
+                        <span class="badge badge-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-secondary">Inactive</span>
+                    }
+                </dd>
+            </dl>
+
+            <div class="form-group">
+                <a asp-page="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
