@@ -15,16 +15,5 @@ namespace DAL.Interfaces
         Task AddNewsArticleAsync(NewsArticle newsArticle);
         Task UpdateNewsArticleAsync(NewsArticle newsArticle);
         Task DeleteNewsArticleAsync(int id);
-
-        // Optional: Check if a news article exists
-        Task<bool> NewsArticleExistsAsync(int id);
-        // Optional: Get news articles by category ID
-        Task<IEnumerable<NewsArticle>> GetNewsArticlesByCategoryIdAsync(int categoryId);
-        // Optional: Get news articles by title
-        Task<IEnumerable<NewsArticle>> GetNewsArticlesByTitleAsync(string title);
-        // Optional: Get news articles by tag ID
-        Task<IEnumerable<NewsArticle>> GetNewsArticlesByTagIdAsync(int tagId);
-
-
     }
 }

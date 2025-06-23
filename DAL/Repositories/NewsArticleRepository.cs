@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Data;
 using DAL.Entities;
+using DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace DAL.Repositories
 {
-    public class NewsArticleRepository
+    public class NewsArticleRepository : INewsArticleRepository
     {
         private readonly NewsContext _context;
         public NewsArticleRepository(NewsContext context)
