@@ -1,0 +1,411 @@
+﻿@page
+@model Assignment2.Pages.NewsArticle.IndexModel
+@{
+    ViewData["Title"] = "News Article Management";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-6">@ViewData["Title"]</h1>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createNewsArticleModal">
+            <i class="bi bi-plus-circle"></i> New News Article
+        </button>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (Model.NewsArticles != null && Model.NewsArticles.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>NewsArticleId</th>
+                                <th>NewsTitle</th>
+                                <th>Headline</th>
+                                <th>CreatedDate</th>
+                                <th>NewsContent</th>
+                                <th>NewsSource</th>
+                                <th>ModifiedDate</th>
+                                <th>Created By</th>
+                                <th>Updated By</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var newsArticle in Model.NewsArticles)
+                            {
+                                <tr>
+                                    <td>@newsArticle.NewsArticleId</td>
+                                    <td>@newsArticle.NewsTitle</td>
+                                    <td>@newsArticle.Headline</td>
+                                    <td>@newsArticle.CreatedDate?.ToString("dd/MM/yyyy")</td>
+                                    <td>@(newsArticle.NewsContent?.Length > 50 ? newsArticle.NewsContent.Substring(0, 50) + "..." : newsArticle.NewsContent)</td>
+                                    <td>@newsArticle.NewsSource</td>
+                                    <td>@newsArticle.ModifiedDate?.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(newsArticle.CreatedByName))
+                                        {
+                                            <span class="badge bg-info">@newsArticle.CreatedByName</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(newsArticle.UpdatedByName))
+                                        {
+                                            <span class="badge bg-secondary">@newsArticle.UpdatedByName</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(newsArticle.CategoryName))
+                                        {
+                                            <span class="badge bg-primary">@newsArticle.CategoryName</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (newsArticle.NewsStatus == true)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-warning edit-btn"
+                                                    title="Edit"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editNewsArticleModal"
+                                                    data-id="@newsArticle.NewsArticleId"
+                                                    data-title="@newsArticle.NewsTitle"
+                                                    data-headline="@newsArticle.Headline"
+                                                    data-content="@newsArticle.NewsContent"
+                                                    data-source="@newsArticle.NewsSource"
+                                                    data-status="@(newsArticle.NewsStatus ?? false)"
+                                                    data-category="@newsArticle.CategoryId">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <form method="post" asp-page-handler="Delete" asp-route-id="@newsArticle.NewsArticleId"
+                                                  onsubmit="return confirm('Are you sure you want to delete this news article?');" style="display:inline;">
+                                                <button type="submit" class="btn btn-outline-danger" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> No NewsArticles found.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Create News Article Modal -->
+<div class="modal fade" id="createNewsArticleModal" tabindex="-1" aria-labelledby="createNewsArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h1 class="modal-title fs-5" id="createNewsArticleModalLabel">
+                    <i class="bi bi-newspaper"></i> Create New News Article
+                </h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="Create" id="createNewsArticleForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- News Title -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="newsTitle" name="NewsTitle" placeholder="Enter news title">
+                                <label for="newsTitle">News Title</label>
+                            </div>
+                        </div>
+
+                        <!-- Headline -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="headline" name="Headline" placeholder="Enter headline" required>
+                                <label for="headline">Headline <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide a headline.
+                            </div>
+                        </div>
+
+                        <!-- News Content -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="newsContent" name="NewsContent" placeholder="Enter news content" style="height: 120px"></textarea>
+                                <label for="newsContent">News Content</label>
+                            </div>
+                        </div>
+
+                        <!-- News Source and Category Row -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="newsSource" name="NewsSource" placeholder="Enter news source">
+                                <label for="newsSource">News Source</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="categoryId" name="CategoryId" required>
+                                    <option value="">Choose a category...</option>
+                                    @if (Model.Categories != null)
+                                    {
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+                                <label for="categoryId">Category <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please select a category.
+                            </div>
+                        </div>
+
+                        <!-- News Status -->
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="newsStatus" name="NewsStatus" value="true" checked>
+                                <input name="NewsStatus" type="hidden" value="false" />
+                                <label class="form-check-label" for="newsStatus">
+                                    <strong>Active Status</strong>
+                                    <small class="text-muted d-block">Toggle to set the article as active or inactive</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Create Article
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit News Article Modal -->
+<div class="modal fade" id="editNewsArticleModal" tabindex="-1" aria-labelledby="editNewsArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h1 class="modal-title fs-5" id="editNewsArticleModalLabel">
+                    <i class="bi bi-pencil-square"></i> Edit News Article
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="Update" id="editNewsArticleForm">
+                <input type="hidden" id="editNewsArticleId" name="NewsArticleId" />
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- News Title -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="editNewsTitle" name="NewsTitle" placeholder="Enter news title">
+                                <label for="editNewsTitle">News Title</label>
+                            </div>
+                        </div>
+
+                        <!-- Headline -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="editHeadline" name="Headline" placeholder="Enter headline" required>
+                                <label for="editHeadline">Headline <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please provide a headline.
+                            </div>
+                        </div>
+
+                        <!-- News Content -->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="editNewsContent" name="NewsContent" placeholder="Enter news content" style="height: 120px"></textarea>
+                                <label for="editNewsContent">News Content</label>
+                            </div>
+                        </div>
+
+                        <!-- News Source and Category Row -->
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="editNewsSource" name="NewsSource" placeholder="Enter news source">
+                                <label for="editNewsSource">News Source</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="editCategoryId" name="CategoryId" required>
+                                    <option value="">Choose a category...</option>
+                                    @if (Model.Categories != null)
+                                    {
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+                                <label for="editCategoryId">Category <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please select a category.
+                            </div>
+                        </div>
+
+                        <!-- News Status -->
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="editNewsStatus" name="NewsStatus" value="true">
+                                <input name="NewsStatus" type="hidden" value="false" />
+                                <label class="form-check-label" for="editNewsStatus">
+                                    <strong>Active Status</strong>
+                                    <small class="text-muted d-block">Toggle to set the article as active or inactive</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-check-circle"></i> Update Article
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-floating .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    .btn-close-white {
+        filter: invert(1) grayscale(100%) brightness(200%);
+    }
+
+    .badge {
+        font-size: 0.8em;
+        padding: 0.4em 0.8em;
+    }
+</style>
+
+<script>
+    // Initialize form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const createForm = document.getElementById('createNewsArticleForm');
+        const editForm = document.getElementById('editNewsArticleForm');
+
+        // Create form validation
+        createForm.addEventListener('submit', function(event) {
+            if (!createForm.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            createForm.classList.add('was-validated');
+        });
+
+        // Edit form validation
+        editForm.addEventListener('submit', function(event) {
+            if (!editForm.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            editForm.classList.add('was-validated');
+        });
+
+        // Reset create form when modal is hidden
+        document.getElementById('createNewsArticleModal').addEventListener('hidden.bs.modal', function() {
+            createForm.reset();
+            createForm.classList.remove('was-validated');
+            document.getElementById('newsStatus').checked = true;
+        });
+
+        // Reset edit form when modal is hidden
+        document.getElementById('editNewsArticleModal').addEventListener('hidden.bs.modal', function() {
+            editForm.reset();
+            editForm.classList.remove('was-validated');
+        });
+
+        // Handle edit button clicks
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Get data attributes
+                const id = this.getAttribute('data-id');
+                const title = this.getAttribute('data-title');
+                const headline = this.getAttribute('data-headline');
+                const content = this.getAttribute('data-content');
+                const source = this.getAttribute('data-source');
+                const status = this.getAttribute('data-status') === 'true';
+                const categoryId = this.getAttribute('data-category');
+
+                // Populate edit form
+                document.getElementById('editNewsArticleId').value = id;
+                document.getElementById('editNewsTitle').value = title || '';
+                document.getElementById('editHeadline').value = headline || '';
+                document.getElementById('editNewsContent').value = content || '';
+                document.getElementById('editNewsSource').value = source || '';
+                document.getElementById('editNewsStatus').checked = status;
+                document.getElementById('editCategoryId').value = categoryId || '';
+            });
+        });
+    });
+</script>

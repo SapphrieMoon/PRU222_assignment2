@@ -22,14 +22,15 @@ namespace BLL.Services
             _tagRepo = tagRepo;
             _mapper = mapper;
         }
-        public async Task<TagDTO> GetTagByIdAsync()
+        public async Task<TagDTO> GetTagByIdAsync(int id)
         {
-            var tag = await _tagRepo.GetAllAsyncs();
+            var tag = await _tagRepo.GetByIdAsync(id);
             if (tag == null)
             {
-                throw new KeyNotFoundException("Tag not found.");
+                throw new KeyNotFoundException($"Tag with ID {id} not found.");
             }
             return _mapper.Map<TagDTO>(tag);
+
         }
 
         public async Task<TagDTO> AddTagAsync(CreateTagDTO createTagDTO)
@@ -71,5 +72,11 @@ namespace BLL.Services
             await _tagRepo.DeleteAsync(id);
             return _mapper.Map<TagDTO>(tag);
         }
+        public async Task<IEnumerable<TagDTO>> GetAllTagsAsync()
+        {
+            var tags = await _tagRepo.GetAllAsyncs();
+            return _mapper.Map<IEnumerable<TagDTO>>(tags);
+        }
+
     }
 }

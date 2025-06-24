@@ -45,6 +45,10 @@ namespace Assignment2
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+            //------------------------------------- NewsArticle -------------------------------------
+            builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
+            builder.Services.AddScoped<INewsArticleService, NewsArticleService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

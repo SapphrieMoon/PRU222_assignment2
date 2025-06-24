@@ -11,9 +11,10 @@ namespace DAL.Interfaces
     {
         // CRUD operations for NewsArticle
         Task<IEnumerable<NewsArticle>> GetAllNewsArticlesAsync();
-        Task<NewsArticle?> GetNewsArticleByIdAsync(int id);
+        Task<NewsArticle?> GetNewsArticleByIdAsync(string id);
         Task AddNewsArticleAsync(NewsArticle newsArticle);
-        Task UpdateNewsArticleAsync(NewsArticle newsArticle);
-        Task DeleteNewsArticleAsync(int id);
+        Task UpdateNewsArticleAsync(NewsArticle newsArticle, int updateUserId); // Changed from short to int
+        Task DeleteNewsArticleAsync(string id);
+        Task<IEnumerable<NewsArticle>> GetAllNewsArticlesActiveAsync();
     }
 }

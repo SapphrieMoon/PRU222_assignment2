@@ -8,7 +8,6 @@ using DAL.Entities;
 using DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace DAL.Repositories
 {
     public class NewsArticleRepository : INewsArticleRepository
@@ -18,52 +17,109 @@ namespace DAL.Repositories
         {
             _context = context;
         }
+
         public async Task<IEnumerable<NewsArticle>> GetAllNewsArticlesAsync()
         {
-            return await _context.NewsArticles.ToListAsync();
+            return await _context.NewsArticles
+                .Include(na => na.CreatedBy)
+                .Include(na => na.UpdatedBy)
+                .Include(na => na.Category)
+                .ToListAsync();
         }
-        public async Task<NewsArticle?> GetNewsArticleByIdAsync(int id)
+
+        public async Task<NewsArticle?> GetNewsArticleByIdAsync(string id)
         {
-            return await _context.NewsArticles.FindAsync(id);
+            return await _context.NewsArticles
+                .Include(na => na.CreatedBy)
+                .Include(na => na.UpdatedBy)
+                .Include(na => na.Category)
+                .FirstOrDefaultAsync(a => a.NewsArticleId == id);
         }
+
         public async Task AddNewsArticleAsync(NewsArticle newsArticle)
         {
-            await _context.NewsArticles.AddAsync(newsArticle);
-            await _context.SaveChangesAsync();
-        }
-        public async Task UpdateNewsArticleAsync(NewsArticle newsArticle)
-        {
-            _context.NewsArticles.Update(newsArticle);
-            await _context.SaveChangesAsync();
-        }
-        public async Task DeleteNewsArticleAsync(int id)
-        {
-            var newsArticle = await GetNewsArticleByIdAsync(id);
-            if (newsArticle != null)
+            try
             {
-                _context.NewsArticles.Remove(newsArticle);
-                await _context.SaveChangesAsync();
+                var existingNewsArticle = await GetNewsArticleByIdAsync(newsArticle.NewsArticleId);
+                if (existingNewsArticle != null)
+                {
+                    throw new Exception($"News article with ID {newsArticle.NewsArticleId} already exists.");
+                }
+                else
+                {
+                    _context.NewsArticles.Add(newsArticle);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 
+        public async Task UpdateNewsArticleAsync(NewsArticle newsArticle, int updateUserId) // Changed parameter type from short to int
+        {
+            try
+            {
+                var existingNewsArticle = await GetNewsArticleByIdAsync(newsArticle.NewsArticleId);
+                if (existingNewsArticle == null)
+                {
+                    throw new Exception($"News article with ID {newsArticle.NewsArticleId} does not exist.");
+                }
+                else
+                {
+                    existingNewsArticle.NewsTitle = newsArticle.NewsTitle;
+                    existingNewsArticle.Headline = newsArticle.Headline;
+                    existingNewsArticle.NewsContent = newsArticle.NewsContent;
+                    existingNewsArticle.NewsSource = newsArticle.NewsSource;
+                    existingNewsArticle.NewsStatus = newsArticle.NewsStatus;
+                    existingNewsArticle.UpdatedById = updateUserId; // Use the passed updateUserId parameter
+                    existingNewsArticle.ModifiedDate = DateTime.UtcNow;
 
-        public async Task<IEnumerable<NewsArticle>> GetNewsArticlesByCategoryIdAsync(int categoryId)
-        {
-            return await _context.NewsArticles
-                .Where(a => a.CategoryId == categoryId)
-                .ToListAsync();
+                    // Check if category exists
+                    var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == newsArticle.CategoryId);
+                    if (category == null)
+                    {
+                        throw new Exception($"Category with ID {newsArticle.CategoryId} does not exist.");
+                    }
+
+                    existingNewsArticle.CategoryId = newsArticle.CategoryId;
+
+                    _context.NewsArticles.Update(existingNewsArticle); // Update the existing article, not the parameter
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
-        public async Task<IEnumerable<NewsArticle>> GetNewsArticlesByTitleAsync(string title)
+
+        public async Task DeleteNewsArticleAsync(string id)
         {
-            return await _context.NewsArticles
-                .Where(a => a.NewsTitle.Contains(title))
-                .ToListAsync();
+            try
+            {
+                var newsArticle = await GetNewsArticleByIdAsync(id);
+                if (newsArticle != null)
+                {
+                    _context.NewsArticles.Remove(newsArticle);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error deleting news article with ID {id}: {e.Message}");
+            }
         }
-        public async Task<IEnumerable<NewsArticle>> GetNewsArticlesByTagIdAsync(int tagId)
+
+        public async Task<IEnumerable<NewsArticle>> GetAllNewsArticlesActiveAsync()
         {
             return await _context.NewsArticles
-                .Where(a => a.NewsTags.Any(t => t.TagId == tagId))
-                .ToListAsync();
+               .Include(na => na.CreatedBy)
+               .Include(na => na.UpdatedBy)
+               .Include(na => na.Category)
+               .Where(c => c.NewsStatus == true)
+               .ToListAsync();
         }
     }
 }
