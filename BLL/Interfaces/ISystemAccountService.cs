@@ -14,7 +14,7 @@ namespace BLL.Interfaces
         Task<IEnumerable<AccountResponseDTO>> GetAllAccountsAsync();
         Task<AccountResponseDTO?> GetAccountByIdAsync(int id);
         Task CreateAccountAsync(CreateAccountDTO dto);
-        Task UpdateAccountAsync(int id, UpdateAccountDTO dto);
+        Task UpdateAccountAsync(UpdateAccountDTO dto);
         Task DeleteAccountAsync(int id);
     }
 }

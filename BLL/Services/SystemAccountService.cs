@@ -68,11 +68,14 @@ namespace BLL.Services
             await _accountRepo.AddAsync(account);
         }
 
-        public async Task UpdateAccountAsync(int id, UpdateAccountDTO dto)
+        public async Task UpdateAccountAsync(UpdateAccountDTO dto)
         {
-            var account = await _accountRepo.GetByIdAsync(id);
-            if (account == null) throw new KeyNotFoundException("Account not found.");
+            // Lấy ID từ DTO thay vì dùng biến id chưa định nghĩa
+            var account = await _accountRepo.GetByIdAsync(dto.AccountId);
+            if (account == null)
+                throw new KeyNotFoundException("Account not found.");
 
+            // Chỉ cập nhật nếu giá trị mới khác null
             account.AccountName = dto.AccountName ?? account.AccountName;
             account.AccountEmail = dto.AccountEmail ?? account.AccountEmail;
             account.AccountPassword = dto.Password ?? account.AccountPassword;
