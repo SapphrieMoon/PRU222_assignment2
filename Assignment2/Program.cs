@@ -55,6 +55,9 @@ namespace Assignment2
             //------------------------------------- Tag -------------------------------------
             builder.Services.AddScoped<ITagRepository, TagRepository>();
             builder.Services.AddScoped<ITagService, TagService>();
+            //-------------------------------------- Report---------------------------------------------------------------------
+            builder.Services.AddScoped<IReportService, ReportService>();
+            builder.Services.AddScoped<IReportRepository, ReportRepository>();
 
             var app = builder.Build();
 

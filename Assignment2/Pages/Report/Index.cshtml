@@ -1,0 +1,68 @@
+@page
+@model Assignment2.Pages.Report.IndexModel
+@{
+    ViewData["Title"] = "Report";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">📊 Báo cáo Thống kê</h2>
+
+    <form method="get" class="row g-3 mb-4 border p-3 rounded shadow-sm">
+        <div class="col-md-5">
+            <label for="month" class="form-label">Chọn tháng:</label>
+            <input type="number" id="month" name="month" min="1" max="12" class="form-control" value="@Model.SelectedMonth" />
+        </div>
+
+        <div class="col-md-5">
+            <label for="year" class="form-label">Chọn năm:</label>
+            <input type="number" id="year" name="year" min="2000" max="2100" class="form-control" value="@Model.SelectedYear" />
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Xem báo cáo</button>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">🎯 Tỉ lệ sử dụng Tag</h5>
+                    <canvas id="pieChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">📰 Số lượng bài viết theo tháng</h5>
+                    <canvas id="barChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var pieData = {
+            labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TagUsage.Keys)),
+            datasets: [{
+                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TagUsage.Values)),
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF']
+            }]
+        };
+        new Chart(document.getElementById('pieChart').getContext('2d'), { type: 'pie', data: pieData });
+
+        var barData = {
+            labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ArticleCountByMonth.Keys)),
+            datasets: [{
+                label: 'Số bài viết',
+                data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ArticleCountByMonth.Values)),
+                backgroundColor: '#36A2EB'
+            }]
+        };
+        new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: barData });
+    </script>
+}
