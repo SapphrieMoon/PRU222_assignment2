@@ -37,11 +37,11 @@
                         <thead class="table-dark">
                             <tr>
                                 <th>NewsTitle</th>
-                                <th>Headline</th>
-                                <th>CreatedDate</th>
+                                @* <th>Headline</th> *@
+                                @* <th>CreatedDate</th> *@
                                 <th>NewsContent</th>
                                 <th>NewsSource</th>
-                                <th>ModifiedDate</th>
+                                @* <th>ModifiedDate</th> *@
                                 <th>Created By</th>
                                 <th>Updated By</th>
                                 <th>Category</th>
@@ -55,11 +55,11 @@
                             {
                                 <tr>
                                     <td>@newsArticle.NewsTitle</td>
-                                    <td>@newsArticle.Headline</td>
-                                    <td>@newsArticle.CreatedDate?.ToString("dd/MM/yyyy")</td>
+                                    @* <td>@newsArticle.Headline</td> *@
+                                    @* <td>@newsArticle.CreatedDate?.ToString("dd/MM/yyyy")</td> *@
                                     <td>@(newsArticle.NewsContent?.Length > 50 ? newsArticle.NewsContent.Substring(0, 50) + "..." : newsArticle.NewsContent)</td>
                                     <td>@newsArticle.NewsSource</td>
-                                    <td>@newsArticle.ModifiedDate?.ToString("dd/MM/yyyy")</td>
+                                    @* <td>@newsArticle.ModifiedDate?.ToString("dd/MM/yyyy")</td> *@
                                     <td>
                                         @if (!string.IsNullOrEmpty(newsArticle.CreatedByName))
                                         {
@@ -252,7 +252,7 @@
                         <!-- News Status -->
                         <div class="col-12">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="newsStatus" name="NewsStatus" value="true" checked>
+                                <input class="form-check-input" style="margin-right: 10px" type="checkbox" id="newsStatus" name="NewsStatus" value="true" checked>
                                 <input name="NewsStatus" type="hidden" value="false" />
                                 <label class="form-check-label" for="newsStatus">
                                     <strong>Active Status</strong>
@@ -370,7 +370,7 @@
                         <!-- News Status -->
                         <div class="col-12">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="editNewsStatus" name="NewsStatus" value="true">
+                                <input class="form-check-input" style="margin-right: 10px" type="checkbox" id="editNewsStatus" name="NewsStatus" value="true">
                                 <input name="NewsStatus" type="hidden" value="false" />
                                 <label class="form-check-label" for="editNewsStatus">
                                     <strong>Active Status</strong>

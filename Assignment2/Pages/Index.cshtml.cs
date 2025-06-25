@@ -4,6 +4,7 @@ using BLL.Interfaces;
 using BLL.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Assignment2.Pages
 {
@@ -11,18 +12,33 @@ namespace Assignment2.Pages
     {
         private readonly ILogger<IndexModel> _logger;
         private readonly INewsArticleService _newsArticleService;
+        private readonly ICategoryService _categoryService;
 
         public IEnumerable<NewsArticleDTO> ActiveArticles { get; set; }
+        public IEnumerable<CategoryDTO> Categories { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger, INewsArticleService newsArticleService)
+        [BindProperty(SupportsGet = true)]
+        public List<int> SelectedCategoryIds { get; set; } = new List<int>();
+
+        public IndexModel(ILogger<IndexModel> logger, INewsArticleService newsArticleService, ICategoryService categoryService)
         {
             _logger = logger;
             _newsArticleService = newsArticleService;
+            _categoryService = categoryService;
         }
 
         public async Task OnGetAsync()
         {
-            ActiveArticles = await _newsArticleService.GetAllNewsArticlesActiveAsync();
+            Categories = await _categoryService.GetActiveCategoriesAsync();
+            var allArticles = await _newsArticleService.GetAllNewsArticlesActiveAsync();
+            if (SelectedCategoryIds != null && SelectedCategoryIds.Any())
+            {
+                ActiveArticles = allArticles.Where(a => SelectedCategoryIds.Contains(a.CategoryId));
+            }
+            else
+            {
+                ActiveArticles = allArticles;
+            }
         }
     }
 }
