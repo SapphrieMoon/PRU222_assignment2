@@ -10,6 +10,8 @@ using DAL.Entities;
 using BLL.Interfaces;
 using BLL.DTOs;
 using Microsoft.AspNetCore.Http; // Add this for session support
+using Microsoft.AspNetCore.SignalR;
+using Assignment2.Hubs;
 
 namespace Assignment2.Pages.NewsArticle
 {
@@ -19,14 +21,16 @@ namespace Assignment2.Pages.NewsArticle
         private readonly ICategoryService _categoryService;
         private readonly ITagService _tagService; // Add tag service
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHubContext<NewsHub> _newsHubContext;
 
         public IndexModel(INewsArticleService newsArticleService, ICategoryService categoryService,
-            ITagService tagService, IHttpContextAccessor httpContextAccessor)
+            ITagService tagService, IHttpContextAccessor httpContextAccessor, IHubContext<NewsHub> newsHubContext)
         {
             _newsArticleService = newsArticleService;
             _categoryService = categoryService;
             _tagService = tagService; // Initialize tag service
             _httpContextAccessor = httpContextAccessor;
+            _newsHubContext = newsHubContext;
         }
 
         public IEnumerable<NewsArticleDTO> NewsArticles { get; set; }
@@ -71,6 +75,8 @@ namespace Assignment2.Pages.NewsArticle
 
                 await _newsArticleService.AddNewsArticleAsync(NewsArticle, currentAccountId.Value);
                 TempData["SuccessMessage"] = "News article created successfully.";
+                // Broadcast to SignalR
+                await _newsHubContext.Clients.All.SendAsync("NewsArticleCreated");
             }
             catch (ArgumentNullException ex)
             {
@@ -109,6 +115,8 @@ namespace Assignment2.Pages.NewsArticle
 
                 await _newsArticleService.UpdateNewsArticleAsync(UpdateNewsArticle, currentAccountId.Value);
                 TempData["SuccessMessage"] = "News article updated successfully.";
+                // Broadcast to SignalR
+                await _newsHubContext.Clients.All.SendAsync("NewsArticleUpdated");
             }
             catch (KeyNotFoundException ex)
             {
@@ -132,6 +140,8 @@ namespace Assignment2.Pages.NewsArticle
             {
                 await _newsArticleService.DeleteNewsArticleAsync(id);
                 TempData["SuccessMessage"] = "News article deleted successfully.";
+                // Broadcast to SignalR
+                await _newsHubContext.Clients.All.SendAsync("NewsArticleDeleted");
             }
             catch (KeyNotFoundException ex)
             {
