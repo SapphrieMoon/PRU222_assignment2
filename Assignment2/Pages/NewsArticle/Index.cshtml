@@ -32,13 +32,13 @@
         <div class="card-body">
             @if (Model.NewsArticles != null && Model.NewsArticles.Any())
             {
-                <div class="table-responsive">
+                <div class="table-responsive" style="overflow-x: auto;">
                     <table class="table table-hover table-striped">
                         <thead class="table-dark">
                             <tr>
-                                <th>NewsTitle</th>
+                                <th>News Title</th>
                                 <th>Headline</th>
-                                <th>CreatedDate</th>
+                                <th>Created Date</th>
                                 @* <th>NewsContent</th>
                                 <th>NewsSource</th>
                                 <th>ModifiedDate</th> *@
@@ -422,9 +422,6 @@
             margin-top: 0.125rem;
         }
 </style>
-
-<script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/News.cs"></script>
 
 <script>
     // Initialize form validation
