@@ -24,6 +24,9 @@ namespace DAL.Repositories
                 .Include(na => na.CreatedBy)
                 .Include(na => na.UpdatedBy)
                 .Include(na => na.Category)
+                .Include(na => na.NewsTags)
+                    .ThenInclude(nt => nt.Tag) // Include tag information
+                .Where(na => na.Category != null && na.Category.IsActive == true)
                 .ToListAsync();
         }
 
@@ -33,6 +36,8 @@ namespace DAL.Repositories
                 .Include(na => na.CreatedBy)
                 .Include(na => na.UpdatedBy)
                 .Include(na => na.Category)
+                .Include(na => na.NewsTags)
+                    .ThenInclude(nt => nt.Tag) // Include tag information
                 .FirstOrDefaultAsync(a => a.NewsArticleId == id);
         }
 
@@ -57,7 +62,7 @@ namespace DAL.Repositories
             }
         }
 
-        public async Task UpdateNewsArticleAsync(NewsArticle newsArticle, int updateUserId) // Changed parameter type from short to int
+        public async Task UpdateNewsArticleAsync(NewsArticle newsArticle, int updateUserId)
         {
             try
             {
@@ -73,7 +78,7 @@ namespace DAL.Repositories
                     existingNewsArticle.NewsContent = newsArticle.NewsContent;
                     existingNewsArticle.NewsSource = newsArticle.NewsSource;
                     existingNewsArticle.NewsStatus = newsArticle.NewsStatus;
-                    existingNewsArticle.UpdatedById = updateUserId; // Use the passed updateUserId parameter
+                    existingNewsArticle.UpdatedById = updateUserId;
                     existingNewsArticle.ModifiedDate = DateTime.UtcNow;
 
                     // Check if category exists
@@ -85,7 +90,7 @@ namespace DAL.Repositories
 
                     existingNewsArticle.CategoryId = newsArticle.CategoryId;
 
-                    _context.NewsArticles.Update(existingNewsArticle); // Update the existing article, not the parameter
+                    _context.NewsArticles.Update(existingNewsArticle);
                     await _context.SaveChangesAsync();
                 }
             }
@@ -118,8 +123,42 @@ namespace DAL.Repositories
                .Include(na => na.CreatedBy)
                .Include(na => na.UpdatedBy)
                .Include(na => na.Category)
+               .Include(na => na.NewsTags)
+                   .ThenInclude(nt => nt.Tag) // Include tag information
                .Where(c => c.NewsStatus == true)
                .ToListAsync();
+        }
+
+        // Add method to manage news article tags
+        public async Task UpdateNewsArticleTagsAsync(string newsArticleId, List<int> tagIds)
+        {
+            try
+            {
+                // Remove existing tags
+                var existingTags = await _context.NewsTags
+                    .Where(nt => nt.NewsArticleId == newsArticleId)
+                    .ToListAsync();
+
+                _context.NewsTags.RemoveRange(existingTags);
+
+                // Add new tags
+                if (tagIds != null && tagIds.Any())
+                {
+                    var newTags = tagIds.Select(tagId => new NewsTag
+                    {
+                        NewsArticleId = newsArticleId,
+                        TagId = tagId
+                    }).ToList();
+
+                    await _context.NewsTags.AddRangeAsync(newTags);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error updating tags for news article {newsArticleId}: {e.Message}");
+            }
         }
     }
 }

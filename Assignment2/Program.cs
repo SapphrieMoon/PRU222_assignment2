@@ -5,6 +5,7 @@ using DAL.Data;
 using DAL.Interfaces;
 using DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Assignment2.Hubs;
 
 namespace Assignment2
 {
@@ -16,6 +17,7 @@ namespace Assignment2
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            builder.Services.AddSignalR();
 
             // Cấu hình Session
             builder.Services.AddSession(options =>
@@ -41,6 +43,7 @@ namespace Assignment2
             // Cấu hình Dependency Injection cho các repository và service
             builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
             builder.Services.AddScoped<ISystemAccountService, SystemAccountService>();
+
             //------------------------------------- Category -------------------------------------
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -48,6 +51,10 @@ namespace Assignment2
             //------------------------------------- NewsArticle -------------------------------------
             builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
             builder.Services.AddScoped<INewsArticleService, NewsArticleService>();
+
+            //------------------------------------- Tag -------------------------------------
+            builder.Services.AddScoped<ITagRepository, TagRepository>();
+            builder.Services.AddScoped<ITagService, TagService>();
 
             var app = builder.Build();
 
@@ -70,7 +77,8 @@ namespace Assignment2
             app.UseAuthorization();
 
             app.MapRazorPages();
-
+            app.MapHub<Assignment2.Hubs.NewsHub>("/newsHub");
+            app.MapHub<Assignment2.Hubs.CategoryHub>("/categoryHub");
 
             app.Run();
         }
