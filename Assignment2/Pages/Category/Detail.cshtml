@@ -4,58 +4,66 @@
     ViewData["Title"] = "Category Details";
 }
 
-<div class="container mt-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="bi bi-info-circle"></i> @ViewData["Title"]
-                    </h3>
-                </div>
+        <div class="col-lg-8">
+            <article class="card shadow-sm border-0">
+                <header class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>@ViewData["Title"]
+                    </h4>
+                </header>
                 <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-4">ID</dt>
-                        <dd class="col-sm-8">@Model.Category.CategoryId</dd>
+                    <h5 class="fw-bold text-primary mb-3">@Model.Category.CategoryName</h5>
 
-                        <dt class="col-sm-4">Name</dt>
-                        <dd class="col-sm-8">@Model.Category.CategoryName</dd>
+                    <p class="text-muted small">
+                        <i class="bi bi-hash"></i> ID: <strong>@Model.Category.CategoryId</strong>
+                    </p>
 
-                        <dt class="col-sm-4">Description</dt>
-                        <dd class="col-sm-8">@Model.Category.CategoryDescription</dd>
+                    <p class="mb-4">
+                        @if (!string.IsNullOrWhiteSpace(Model.Category.CategoryDescription))
+                        {
+                            @Model.Category.CategoryDescription
+                        }
+                        else
+                        {
+                            <em>No description provided.</em>
+                        }
+                    </p>
 
-                        <dt class="col-sm-4">Parent Category</dt>
-                        <dd class="col-sm-8">
-                            @if (Model.Category.ParentCategoryId > 0)
-                            {
-                                <span class="badge bg-secondary">@Model.ParentCategoryName</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-light text-dark">None</span>
-                            }
-                        </dd>
+                    <hr />
 
-                        <dt class="col-sm-4">Status</dt>
-                        <dd class="col-sm-8">
-                            @if (Model.Category.IsActive == true)
-                            {
-                                <span class="badge bg-success">Active</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Inactive</span>
-                            }
-                        </dd>
-                    </dl>
+                    <p class="mb-2">
+                        <strong>Parent Category:</strong>
+                        @if (Model.Category.ParentCategoryId > 0)
+                        {
+                            <span class="badge bg-secondary">@Model.ParentCategoryName</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-light text-dark">None</span>
+                        }
+                    </p>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a asp-page="Index" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Back to List
-                        </a>
-                    </div>
+                    <p class="mb-0">
+                        <strong>Status:</strong>
+                        @if (Model.Category.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Inactive</span>
+                        }
+                    </p>
                 </div>
-            </div>
+
+                <footer class="card-footer bg-light d-flex justify-content-end">
+                    <a asp-page="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Back to List
+                    </a>
+                </footer>
+            </article>
         </div>
     </div>
 </div>
