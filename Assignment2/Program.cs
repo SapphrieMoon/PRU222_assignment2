@@ -74,6 +74,7 @@ namespace Assignment2
 
             app.MapRazorPages();
             app.MapHub<ChatHub>("/chatHub");
+            app.MapHub<Assignment2.Hubs.NewsHub>("/newsHub");
 
             app.Run();
         }
