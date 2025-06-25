@@ -38,7 +38,20 @@ namespace BLL.Services
             article.ModifiedDate = DateTime.UtcNow;
 
             await _newsArticleRepo.AddNewsArticleAsync(article);
-            return _mapper.Map<NewsArticleDTO>(article);
+
+            // Handle tags if provided
+            if (newsArticle.TagIds != null && newsArticle.TagIds.Any())
+            {
+                // Cast to NewsArticleRepository to access the tag method
+                if (_newsArticleRepo is DAL.Repositories.NewsArticleRepository repo)
+                {
+                    await repo.UpdateNewsArticleTagsAsync(article.NewsArticleId, newsArticle.TagIds);
+                }
+            }
+
+            // Get the created article with all related data
+            var createdArticle = await _newsArticleRepo.GetNewsArticleByIdAsync(article.NewsArticleId);
+            return _mapper.Map<NewsArticleDTO>(createdArticle);
         }
 
         public async Task<NewsArticleDTO> DeleteNewsArticleAsync(string id)
@@ -89,11 +102,22 @@ namespace BLL.Services
             existingArticle.UpdatedById = updateUserId;
             existingArticle.ModifiedDate = DateTime.UtcNow;
 
-            // Save the changes to the repository
+            // Save the basic article changes to the repository
             await _newsArticleRepo.UpdateNewsArticleAsync(existingArticle, updateUserId);
 
-            // Return the updated article as a DTO
-            return _mapper.Map<NewsArticleDTO>(existingArticle);
+            // Handle tags if provided
+            if (newsArticle.TagIds != null)
+            {
+                // Cast to NewsArticleRepository to access the tag method
+                if (_newsArticleRepo is DAL.Repositories.NewsArticleRepository repo)
+                {
+                    await repo.UpdateNewsArticleTagsAsync(newsArticle.NewsArticleId, newsArticle.TagIds);
+                }
+            }
+
+            // Get the updated article with all related data
+            var updatedArticle = await _newsArticleRepo.GetNewsArticleByIdAsync(newsArticle.NewsArticleId);
+            return _mapper.Map<NewsArticleDTO>(updatedArticle);
         }
 
         public async Task<IEnumerable<NewsArticleDTO>> GetAllNewsArticlesActiveAsync()

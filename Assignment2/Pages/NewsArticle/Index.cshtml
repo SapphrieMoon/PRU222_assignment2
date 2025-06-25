@@ -36,7 +36,6 @@
                     <table class="table table-hover table-striped">
                         <thead class="table-dark">
                             <tr>
-                                @* <th>NewsArticleId</th> *@
                                 <th>NewsTitle</th>
                                 <th>Headline</th>
                                 <th>CreatedDate</th>
@@ -46,6 +45,7 @@
                                 <th>Created By</th>
                                 <th>Updated By</th>
                                 <th>Category</th>
+                                <th>Tags</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -54,7 +54,6 @@
                             @foreach (var newsArticle in Model.NewsArticles)
                             {
                                 <tr>
-                                    @* <td>@newsArticle.NewsArticleId</td> *@
                                     <td>@newsArticle.NewsTitle</td>
                                     <td>@newsArticle.Headline</td>
                                     <td>@newsArticle.CreatedDate?.ToString("dd/MM/yyyy")</td>
@@ -92,6 +91,19 @@
                                         }
                                     </td>
                                     <td>
+                                        @if (newsArticle.TagNames != null && newsArticle.TagNames.Any())
+                                        {
+                                            @foreach (var tagName in newsArticle.TagNames)
+                                            {
+                                                <span class="badge bg-success me-1">@tagName</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No Tags</span>
+                                        }
+                                    </td>
+                                    <td>
                                         @if (newsArticle.NewsStatus == true)
                                         {
                                             <span class="badge bg-success">Active</span>
@@ -103,6 +115,11 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-page="Detail" asp-route-id="@newsArticle.NewsArticleId">
+                                                <button type="button" class="btn btn-outline-info" title="Detail">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </a>
                                             <button type="button" class="btn btn-outline-warning edit-btn"
                                                     title="Edit"
                                                     data-bs-toggle="modal"
@@ -112,8 +129,9 @@
                                                     data-headline="@newsArticle.Headline"
                                                     data-content="@newsArticle.NewsContent"
                                                     data-source="@newsArticle.NewsSource"
-                                                    data-status="@(newsArticle.NewsStatus ?? false)"
-                                                    data-category="@newsArticle.CategoryId">
+                                                    data-status="@(newsArticle.NewsStatus?.ToString() ?? "false")"
+                                                    data-category="@newsArticle.CategoryId"
+                                                    data-tags="@string.Join(",", newsArticle.TagNames ?? new List<string>())">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
                                             <form method="post" asp-page-handler="Delete" asp-route-id="@newsArticle.NewsArticleId"
@@ -205,6 +223,30 @@
                             <div class="invalid-feedback">
                                 Please select a category.
                             </div>
+                        </div>
+
+                        <!-- Tags Selection -->
+                        <div class="col-12">
+                            <label class="form-label">Tags</label>
+                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                @if (Model.Tags != null && Model.Tags.Any())
+                                {
+                                    @foreach (var tag in Model.Tags)
+                                    {
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="createTag_@tag.TagId" name="TagIds" value="@tag.TagId">
+                                            <label class="form-check-label" for="createTag_@tag.TagId">
+                                                @tag.TagName
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-muted">No tags available</div>
+                                }
+                            </div>
+                            <div class="form-text">Select one or more tags for this article</div>
                         </div>
 
                         <!-- News Status -->
@@ -301,6 +343,30 @@
                             </div>
                         </div>
 
+                        <!-- Tags Selection -->
+                        <div class="col-12">
+                            <label class="form-label">Tags</label>
+                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                @if (Model.Tags != null && Model.Tags.Any())
+                                {
+                                    @foreach (var tag in Model.Tags)
+                                    {
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="editTag_@tag.TagId" name="TagIds" value="@tag.TagId">
+                                            <label class="form-check-label" for="editTag_@tag.TagId">
+                                                @tag.TagName
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-muted">No tags available</div>
+                                }
+                            </div>
+                            <div class="form-text">Select one or more tags for this article</div>
+                        </div>
+
                         <!-- News Status -->
                         <div class="col-12">
                             <div class="form-check form-switch">
@@ -346,16 +412,25 @@
         font-size: 0.8em;
         padding: 0.4em 0.8em;
     }
+
+    .form-check-inline {
+        margin-right: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+        .form-check-inline .form-check-input {
+            margin-top: 0.125rem;
+        }
 </style>
 
 <script>
     // Initialize form validation
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const createForm = document.getElementById('createNewsArticleForm');
         const editForm = document.getElementById('editNewsArticleForm');
 
         // Create form validation
-        createForm.addEventListener('submit', function(event) {
+        createForm.addEventListener('submit', function (event) {
             if (!createForm.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -364,7 +439,7 @@
         });
 
         // Edit form validation
-        editForm.addEventListener('submit', function(event) {
+        editForm.addEventListener('submit', function (event) {
             if (!editForm.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -373,38 +448,81 @@
         });
 
         // Reset create form when modal is hidden
-        document.getElementById('createNewsArticleModal').addEventListener('hidden.bs.modal', function() {
+        document.getElementById('createNewsArticleModal').addEventListener('hidden.bs.modal', function () {
             createForm.reset();
             createForm.classList.remove('was-validated');
             document.getElementById('newsStatus').checked = true;
+            // Uncheck all tag checkboxes
+            document.querySelectorAll('#createNewsArticleModal input[name="TagIds"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
         });
 
         // Reset edit form when modal is hidden
-        document.getElementById('editNewsArticleModal').addEventListener('hidden.bs.modal', function() {
+        document.getElementById('editNewsArticleModal').addEventListener('hidden.bs.modal', function () {
             editForm.reset();
             editForm.classList.remove('was-validated');
+            // Uncheck all tag checkboxes
+            document.querySelectorAll('#editNewsArticleModal input[name="TagIds"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
         });
 
-        // Handle edit button clicks
+        // FIXED: Handle edit button clicks
         document.querySelectorAll('.edit-btn').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
+                console.log('Edit button clicked'); // Debug log
+
                 // Get data attributes
                 const id = this.getAttribute('data-id');
                 const title = this.getAttribute('data-title');
                 const headline = this.getAttribute('data-headline');
                 const content = this.getAttribute('data-content');
                 const source = this.getAttribute('data-source');
-                const status = this.getAttribute('data-status') === 'true';
+                const statusString = this.getAttribute('data-status');
                 const categoryId = this.getAttribute('data-category');
+                const tags = this.getAttribute('data-tags');
+
+                console.log('Status string from data attribute:', statusString); // Debug log
+
+                // FIXED: Better boolean conversion
+                const status = statusString === 'True' || statusString === 'true' || statusString === '1';
+
+                console.log('Converted status boolean:', status); // Debug log
 
                 // Populate edit form
-                document.getElementById('editNewsArticleId').value = id;
+                document.getElementById('editNewsArticleId').value = id || '';
                 document.getElementById('editNewsTitle').value = title || '';
                 document.getElementById('editHeadline').value = headline || '';
                 document.getElementById('editNewsContent').value = content || '';
                 document.getElementById('editNewsSource').value = source || '';
-                document.getElementById('editNewsStatus').checked = status;
                 document.getElementById('editCategoryId').value = categoryId || '';
+
+                // FIXED: Set the checkbox status correctly
+                const statusCheckbox = document.getElementById('editNewsStatus');
+                statusCheckbox.checked = status;
+
+                console.log('Checkbox checked state set to:', statusCheckbox.checked); // Debug log
+
+                // Handle tags selection
+                // First, uncheck all tag checkboxes
+                document.querySelectorAll('#editNewsArticleModal input[name="TagIds"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // Then check the tags that are associated with this article
+                if (tags && tags.trim() !== '') {
+                    const tagNames = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+                    console.log('Tag names to select:', tagNames); // Debug log
+
+                    // Find and check corresponding tag checkboxes
+                    document.querySelectorAll('#editNewsArticleModal input[name="TagIds"]').forEach(checkbox => {
+                        const label = document.querySelector(`label[for="${checkbox.id}"]`);
+                        if (label && tagNames.includes(label.textContent.trim())) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
             });
         });
     });

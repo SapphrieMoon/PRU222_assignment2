@@ -19,33 +19,22 @@ namespace DAL.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<Tag>> GetAllAsyncs()
+
+        public async Task<IEnumerable<Tag>> GetAllTagsAsync()
         {
             return await _context.Tags.ToListAsync();
         }
 
-        public async Task<Tag?> GetByIdAsync(int id)
+        public async Task<Tag?> GetTagByIdAsync(int id)
         {
-            return await _context.Tags.FindAsync(id);
+            return await _context.Tags.FirstOrDefaultAsync(t => t.TagId == id);
         }
-        public async Task AddAsync(Tag tag)
+
+        public async Task<IEnumerable<Tag>> GetTagsByIdsAsync(List<int> tagIds)
         {
-            await _context.Tags.AddAsync(tag);
-            await _context.SaveChangesAsync();
-        }
-        public async Task UpdateAsync(Tag tag)
-        {
-            _context.Tags.Update(tag);
-            await _context.SaveChangesAsync();
-        }
-        public async Task DeleteAsync(int id)
-        {
-            var tag = await GetByIdAsync(id);
-            if (tag != null)
-            {
-                _context.Tags.Remove(tag);
-                await _context.SaveChangesAsync();
-            }
+            return await _context.Tags
+                .Where(t => tagIds.Contains(t.TagId))
+                .ToListAsync();
         }
     }
 }
