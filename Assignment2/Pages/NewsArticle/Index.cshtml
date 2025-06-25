@@ -39,13 +39,13 @@
                                 <th>NewsTitle</th>
                                 <th>Headline</th>
                                 <th>CreatedDate</th>
-                                <th>NewsContent</th>
+                                @* <th>NewsContent</th>
                                 <th>NewsSource</th>
-                                <th>ModifiedDate</th>
+                                <th>ModifiedDate</th> *@
                                 <th>Created By</th>
-                                <th>Updated By</th>
+                                @* <th>Updated By</th> *@
                                 <th>Category</th>
-                                <th>Tags</th>
+                                @* <th>Tags</th> *@
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -57,9 +57,9 @@
                                     <td>@newsArticle.NewsTitle</td>
                                     <td>@newsArticle.Headline</td>
                                     <td>@newsArticle.CreatedDate?.ToString("dd/MM/yyyy")</td>
-                                    <td>@(newsArticle.NewsContent?.Length > 50 ? newsArticle.NewsContent.Substring(0, 50) + "..." : newsArticle.NewsContent)</td>
-                                    <td>@newsArticle.NewsSource</td>
-                                    <td>@newsArticle.ModifiedDate?.ToString("dd/MM/yyyy")</td>
+                                    @* <td>@(newsArticle.NewsContent?.Length > 50 ? newsArticle.NewsContent.Substring(0, 50) + "..." : newsArticle.NewsContent)</td> *@
+                                    @* <td>@newsArticle.NewsSource</td> *@
+                                    @* <td>@newsArticle.ModifiedDate?.ToString("dd/MM/yyyy")</td> *@
                                     <td>
                                         @if (!string.IsNullOrEmpty(newsArticle.CreatedByName))
                                         {
@@ -70,7 +70,7 @@
                                             <span class="text-muted">N/A</span>
                                         }
                                     </td>
-                                    <td>
+                                    @* <td>
                                         @if (!string.IsNullOrEmpty(newsArticle.UpdatedByName))
                                         {
                                             <span class="badge bg-secondary">@newsArticle.UpdatedByName</span>
@@ -79,7 +79,7 @@
                                         {
                                             <span class="text-muted">N/A</span>
                                         }
-                                    </td>
+                                    </td> *@
                                     <td>
                                         @if (!string.IsNullOrEmpty(newsArticle.CategoryName))
                                         {
@@ -90,7 +90,7 @@
                                             <span class="text-muted">N/A</span>
                                         }
                                     </td>
-                                    <td>
+                                    @* <td>
                                         @if (newsArticle.TagNames != null && newsArticle.TagNames.Any())
                                         {
                                             @foreach (var tagName in newsArticle.TagNames)
@@ -102,7 +102,7 @@
                                         {
                                             <span class="text-muted">No Tags</span>
                                         }
-                                    </td>
+                                    </td> *@
                                     <td>
                                         @if (newsArticle.NewsStatus == true)
                                         {
