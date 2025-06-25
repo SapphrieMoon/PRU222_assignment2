@@ -8,3 +8,4 @@
 ## Ignore build results
 bin/
 obj/
+Assignment2/appsettings.json
