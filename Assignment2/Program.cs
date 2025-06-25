@@ -1,5 +1,4 @@
-﻿using Assignment2.Hubs;
-using BLL;
+﻿using BLL;
 using BLL.Interfaces;
 using BLL.Services;
 using DAL.Data;
@@ -73,8 +72,8 @@ namespace Assignment2
             app.UseAuthorization();
 
             app.MapRazorPages();
-            app.MapHub<ChatHub>("/chatHub");
             app.MapHub<Assignment2.Hubs.NewsHub>("/newsHub");
+            app.MapHub<Assignment2.Hubs.CategoryHub>("/categoryHub");
 
             app.Run();
         }
