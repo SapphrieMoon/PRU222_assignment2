@@ -43,6 +43,7 @@ namespace Assignment2
             // Cấu hình Dependency Injection cho các repository và service
             builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
             builder.Services.AddScoped<ISystemAccountService, SystemAccountService>();
+
             //------------------------------------- Category -------------------------------------
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -50,6 +51,10 @@ namespace Assignment2
             //------------------------------------- NewsArticle -------------------------------------
             builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
             builder.Services.AddScoped<INewsArticleService, NewsArticleService>();
+
+            //------------------------------------- Tag -------------------------------------
+            builder.Services.AddScoped<ITagRepository, TagRepository>();
+            builder.Services.AddScoped<ITagService, TagService>();
 
             var app = builder.Build();
 

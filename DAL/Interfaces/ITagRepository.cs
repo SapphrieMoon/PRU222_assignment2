@@ -9,10 +9,8 @@ namespace DAL.Interfaces
 {
     public interface ITagRepository
     {
-        Task<IEnumerable<Tag>> GetAllAsyncs();
-        Task<Tag?> GetByIdAsync(int id);
-        Task AddAsync(Tag tag);
-        Task UpdateAsync(Tag tag);
-        Task DeleteAsync(int id);
+        Task<IEnumerable<Tag>> GetAllTagsAsync();
+        Task<Tag?> GetTagByIdAsync(int id);
+        Task<IEnumerable<Tag>> GetTagsByIdsAsync(List<int> tagIds);
     }
 }

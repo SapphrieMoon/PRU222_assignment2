@@ -17,17 +17,21 @@ namespace Assignment2.Pages.NewsArticle
     {
         private readonly INewsArticleService _newsArticleService;
         private readonly ICategoryService _categoryService;
-        private readonly IHttpContextAccessor _httpContextAccessor; // Add this
+        private readonly ITagService _tagService; // Add tag service
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public IndexModel(INewsArticleService newsArticleService, ICategoryService categoryService, IHttpContextAccessor httpContextAccessor)
+        public IndexModel(INewsArticleService newsArticleService, ICategoryService categoryService,
+            ITagService tagService, IHttpContextAccessor httpContextAccessor)
         {
             _newsArticleService = newsArticleService;
             _categoryService = categoryService;
-            _httpContextAccessor = httpContextAccessor; // Initialize this
+            _tagService = tagService; // Initialize tag service
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IEnumerable<NewsArticleDTO> NewsArticles { get; set; }
         public IEnumerable<CategoryDTO> Categories { get; set; }
+        public IEnumerable<TagDTO> Tags { get; set; } // Add tags property
 
         [BindProperty]
         public NewsArticleCreateDTO NewsArticle { get; set; }
@@ -39,6 +43,7 @@ namespace Assignment2.Pages.NewsArticle
         {
             NewsArticles = await _newsArticleService.GetAllNewsArticlesAsync();
             Categories = await _categoryService.GetActiveCategoriesAsync();
+            Tags = await _tagService.GetAllTagsAsync(); // Load all tags
         }
 
         public async Task<IActionResult> OnPostCreateAsync()
@@ -48,6 +53,7 @@ namespace Assignment2.Pages.NewsArticle
                 // Reload data and return to the same page with validation errors
                 NewsArticles = await _newsArticleService.GetAllNewsArticlesAsync();
                 Categories = await _categoryService.GetActiveCategoriesAsync();
+                Tags = await _tagService.GetAllTagsAsync(); // Reload tags
                 TempData["ErrorMessage"] = "Please correct the errors and try again.";
                 return Page();
             }
@@ -85,6 +91,7 @@ namespace Assignment2.Pages.NewsArticle
                 // Reload data and return to the same page with validation errors
                 NewsArticles = await _newsArticleService.GetAllNewsArticlesAsync();
                 Categories = await _categoryService.GetActiveCategoriesAsync();
+                Tags = await _tagService.GetAllTagsAsync(); // Reload tags
                 TempData["ErrorMessage"] = "Please correct the errors and try again.";
                 return Page();
             }
