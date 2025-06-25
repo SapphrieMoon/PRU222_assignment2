@@ -4,51 +4,83 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-</div>
-
-<div class="container mt-5">
-    <h2 class="mb-4">Latest News Articles</h2>
+<div class="container-fluid mt-5">
     <div class="row">
-        @if (Model.ActiveArticles != null && Model.ActiveArticles.Any())
-        {
-            foreach (var article in Model.ActiveArticles)
-            {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">@article.NewsTitle</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">@article.Headline</h6>
-                            <p class="card-text">
-                                @(article.NewsContent?.Length > 100 ? article.NewsContent.Substring(0, 100) + "..." : article.NewsContent)
-                            </p>
-                        </div>
-                        <div class="card-footer bg-white border-0">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar"></i> @article.CreatedDate?.ToString("dd/MM/yyyy")
-                                <span class="mx-2">|</span>
-                                <i class="bi bi-person"></i> @article.CreatedByName
-                                <span class="mx-2">|</span>
-                                <i class="bi bi-tag"></i> @article.CategoryName
-                                @if (!string.IsNullOrEmpty(article.NewsSource))
-                                {
-                                    <span class="mx-2">|</span>
-                                    <i class="bi bi-link-45deg"></i> @article.NewsSource
-                                }
-                            </small>
-                        </div>
-                    </div>
+        <!-- Sidebar: Category Filter -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-list-check"></i> Categories
                 </div>
-            }
-        }
-        else
-        {
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    <i class="bi bi-info-circle"></i> No active news articles found.
+                <div class="card-body">
+                    <form method="get" id="categoryFilterForm">
+                        @if (Model.Categories != null && Model.Categories.Any())
+                        {
+                            foreach (var category in Model.Categories)
+                            {
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="SelectedCategoryIds" value="@category.CategoryId" id="cat_@category.CategoryId" @(Model.SelectedCategoryIds.Contains(category.CategoryId) ? "checked" : "") onchange="document.getElementById('categoryFilterForm').submit();">
+                                    <label class="form-check-label" for="cat_@category.CategoryId">
+                                        @category.CategoryName
+                                    </label>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-muted">No categories available.</div>
+                        }
+                    </form>
                 </div>
             </div>
-        }
+        </div>
+
+        <!-- Main Content: News Articles -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Latest News Articles</h2>
+            <div class="row">
+                @if (Model.ActiveArticles != null && Model.ActiveArticles.Any())
+                {
+                    foreach (var article in Model.ActiveArticles)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <a asp-page="/NewsArticle/Detail" asp-route-id="@article.NewsArticleId" style="text-decoration: none; color: inherit;">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@article.NewsTitle</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">@article.Headline</h6>
+                                        <p class="card-text">
+                                            @(article.NewsContent?.Length > 100 ? article.NewsContent.Substring(0, 100) + "..." : article.NewsContent)
+                                        </p>
+                                    </div>
+                                    <div class="card-footer bg-white border-0">
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar"></i> @article.CreatedDate?.ToString("dd/MM/yyyy")
+                                            <span class="mx-2">|</span>
+                                            <i class="bi bi-person"></i> @article.CreatedByName
+                                            <span class="mx-2">|</span>
+                                            <i class="bi bi-tag"></i> @article.CategoryName
+                                            @if (!string.IsNullOrEmpty(article.NewsSource))
+                                            {
+                                                <span class="mx-2">|</span>
+                                                <i class="bi bi-link-45deg"></i> @article.NewsSource
+                                            }
+                                        </small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            <i class="bi bi-info-circle"></i> No active news articles found.
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>

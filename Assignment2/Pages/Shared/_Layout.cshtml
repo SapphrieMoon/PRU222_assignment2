@@ -27,9 +27,9 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <!-- Hiển thị cho tất cả role -->
-                        <li class="nav-item">
+                        @* <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Index">Home</a>
-                        </li>
+                        </li> *@
 
                         <!-- Hiển thị theo role -->
                         @if (Context.Session.GetInt32("AccountRole") != null)
@@ -51,9 +51,9 @@
                             <!-- Role 2 (Lecturer) -->
                             @if (role == 2)
                             {
-                                <li class="nav-item">
+                                @* <li class="nav-item">
                                     <a class="nav-link text-dark" asp-page="/News/Index">News Articles</a>
-                                </li>
+                                </li> *@
                             }
 
                             <!-- Role 3 (Admin) -->

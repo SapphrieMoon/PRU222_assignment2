@@ -28,7 +28,7 @@
                     <table class="table table-hover table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th>ID</th>
+                                @* <th>ID</th> *@
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Parent</th>
@@ -40,9 +40,9 @@
                             @foreach (var category in Model.Categories)
                             {
                                 <tr>
-                                    <td>@category.CategoryId</td>
+                                    @* <td>@category.CategoryId</td> *@
                                     <td>@category.CategoryName</td>
-                                    <td>@category.CategoryDescription</td>
+                                    <td>@(category.CategoryDescription?.Length > 62 ? category.CategoryDescription.Substring(0, 62) + "..." : category.CategoryDescription)</td>
                                     <td>
                                         @if (category.ParentCategoryId > 0)
                                         {

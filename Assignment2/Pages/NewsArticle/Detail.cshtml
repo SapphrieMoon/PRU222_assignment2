@@ -7,9 +7,9 @@
 <div class="container mt-4">
     <!-- Back Button -->
     <div class="mb-4">
-        <a asp-page="Index" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Back to News Articles
-        </a>
+        <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">
+            <i class="bi bi-arrow-left"></i> Back to Previous
+        </button>
     </div>
 
     @if (Model.NewsArticle != null)
@@ -71,7 +71,7 @@
                     }
 
                     <!-- Status -->
-                    <div class="mb-2">
+                    <div class="me-4 mb-2">
                         @if (Model.NewsArticle.NewsStatus == true)
                         {
                             <span class="badge bg-success">
