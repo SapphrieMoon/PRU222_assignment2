@@ -1,10 +1,12 @@
-﻿using BLL;
+﻿using Assignment2.Hubs;
+using BLL;
 using BLL.Interfaces;
 using BLL.Services;
 using DAL.Data;
 using DAL.Interfaces;
 using DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Assignment2.Hubs;
 
 namespace Assignment2
 {
@@ -16,6 +18,7 @@ namespace Assignment2
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            builder.Services.AddSignalR();
 
             // Cấu hình Session
             builder.Services.AddSession(options =>
@@ -70,7 +73,7 @@ namespace Assignment2
             app.UseAuthorization();
 
             app.MapRazorPages();
-
+            app.MapHub<ChatHub>("/chatHub");
 
             app.Run();
         }
