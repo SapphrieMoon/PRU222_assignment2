@@ -4,7 +4,7 @@
     ViewData["Title"] = "Categories Management";
 }
 
-<div class="container mt-5">
+<div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="display-6">@ViewData["Title"]</h1>
         <a asp-page="Create" class="btn btn-primary">
@@ -20,12 +20,12 @@
         </div>
     }
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm border-0">
         <div class="card-body">
             @if (Model.Categories != null && Model.Categories.Any())
             {
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped">
+                    <table class="table table-hover table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
                                 <th>ID</th>
@@ -56,7 +56,7 @@
                                         }
                                     </td>
                                     <td>
-                                        @if (category.IsActive == true)
+                                        @if (category.IsActive)
                                         {
                                             <span class="badge bg-success">Active</span>
                                         }
@@ -67,26 +67,21 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm gap-1" role="group">
-											
-												<a asp-page="Detail" asp-route-id="@category.CategoryId">
-                                                    <button type="button" class="btn btn-outline-info" title="Detail">
-													<i class="bi bi-eye"></i>
-                                                </button>
-												</a>
-											
-                                            
-                                            <a asp-page="Update" asp-route-id="@category.CategoryId">
-												<button type="button" class="btn btn-outline-warning" title="Edit">
-													<i class="bi bi-pencil"></i>
-												</button>
-                                                
+                                            <a asp-page="Detail" asp-route-id="@category.CategoryId" class="btn btn-outline-info" title="Detail">
+                                                <i class="bi bi-eye"></i>
                                             </a>
-                                            <form method="post" asp-page-handler="Delete" asp-route-id="@category.CategoryId"
-                                                  onsubmit="return confirm('Are you sure you want to delete this category?');">
-                                                <button type="submit" class="btn btn-outline-danger" title="Delete">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
+                                            <a asp-page="Update" asp-route-id="@category.CategoryId" class="btn btn-outline-warning" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button"
+                                                    class="btn btn-outline-danger"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteConfirmModal"
+                                                    data-id="@category.CategoryId"
+                                                    data-name="@category.CategoryName"
+                                                    title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -104,3 +99,52 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content shadow-sm">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this category?</p>
+                <div class="alert alert-warning mb-0">
+                    <strong id="deleteCategoryName">[Category Name]</strong>
+                </div>
+                <p class="text-danger mt-3">
+                    <i class="bi bi-exclamation-circle me-1"></i>This action cannot be undone!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const deleteModal = document.getElementById('deleteConfirmModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const categoryId = button.getAttribute('data-id');
+            const categoryName = button.getAttribute('data-name');
+
+            document.getElementById('deleteCategoryName').textContent = categoryName;
+            document.getElementById('deleteForm').setAttribute('action', `/Category/Index?handler=Delete&id=${categoryId}`);
+        });
+    </script>
+}
