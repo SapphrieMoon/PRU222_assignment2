@@ -54,7 +54,6 @@ namespace Assignment2.Pages.NewsArticle
         {
             if (!ModelState.IsValid)
             {
-                // Reload data and return to the same page with validation errors
                 NewsArticles = await _newsArticleService.GetAllNewsArticlesAsync();
                 Categories = await _categoryService.GetActiveCategoriesAsync();
                 Tags = await _tagService.GetAllTagsAsync(); // Reload tags
@@ -94,7 +93,6 @@ namespace Assignment2.Pages.NewsArticle
         {
             if (!ModelState.IsValid)
             {
-                // Reload data and return to the same page with validation errors
                 NewsArticles = await _newsArticleService.GetAllNewsArticlesAsync();
                 Categories = await _categoryService.GetActiveCategoriesAsync();
                 Tags = await _tagService.GetAllTagsAsync(); // Reload tags

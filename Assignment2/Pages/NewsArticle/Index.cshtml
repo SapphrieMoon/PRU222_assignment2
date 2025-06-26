@@ -458,22 +458,18 @@
             });
         });
 
-        // Reset edit form when modal is hidden
         document.getElementById('editNewsArticleModal').addEventListener('hidden.bs.modal', function () {
             editForm.reset();
             editForm.classList.remove('was-validated');
-            // Uncheck all tag checkboxes
             document.querySelectorAll('#editNewsArticleModal input[name="TagIds"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
         });
 
-        // FIXED: Handle edit button clicks
         document.querySelectorAll('.edit-btn').forEach(button => {
             button.addEventListener('click', function () {
                 console.log('Edit button clicked'); // Debug log
 
-                // Get data attributes
                 const id = this.getAttribute('data-id');
                 const title = this.getAttribute('data-title');
                 const headline = this.getAttribute('data-headline');
@@ -485,12 +481,10 @@
 
                 console.log('Status string from data attribute:', statusString); // Debug log
 
-                // FIXED: Better boolean conversion
                 const status = statusString === 'True' || statusString === 'true' || statusString === '1';
 
                 console.log('Converted status boolean:', status); // Debug log
 
-                // Populate edit form
                 document.getElementById('editNewsArticleId').value = id || '';
                 document.getElementById('editNewsTitle').value = title || '';
                 document.getElementById('editHeadline').value = headline || '';
@@ -498,24 +492,19 @@
                 document.getElementById('editNewsSource').value = source || '';
                 document.getElementById('editCategoryId').value = categoryId || '';
 
-                // FIXED: Set the checkbox status correctly
                 const statusCheckbox = document.getElementById('editNewsStatus');
                 statusCheckbox.checked = status;
 
                 console.log('Checkbox checked state set to:', statusCheckbox.checked); // Debug log
 
-                // Handle tags selection
-                // First, uncheck all tag checkboxes
                 document.querySelectorAll('#editNewsArticleModal input[name="TagIds"]').forEach(checkbox => {
                     checkbox.checked = false;
                 });
 
-                // Then check the tags that are associated with this article
                 if (tags && tags.trim() !== '') {
                     const tagNames = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
                     console.log('Tag names to select:', tagNames); // Debug log
 
-                    // Find and check corresponding tag checkboxes
                     document.querySelectorAll('#editNewsArticleModal input[name="TagIds"]').forEach(checkbox => {
                         const label = document.querySelector(`label[for="${checkbox.id}"]`);
                         if (label && tagNames.includes(label.textContent.trim())) {
