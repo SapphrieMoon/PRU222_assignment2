@@ -31,13 +31,26 @@ namespace Assignment2.Pages
         {
             Categories = await _categoryService.GetActiveCategoriesAsync();
             var allArticles = await _newsArticleService.GetAllNewsArticlesActiveAsync();
+
             if (SelectedCategoryIds != null && SelectedCategoryIds.Any())
             {
-                ActiveArticles = allArticles.Where(a => SelectedCategoryIds.Contains(a.CategoryId));
+                // Get IDs of active categories
+                var activeCategoryIds = Categories.Select(c => c.CategoryId).ToList();
+
+                // Filter by selected categories that are also active
+                var validSelectedCategoryIds = SelectedCategoryIds.Where(id => activeCategoryIds.Contains(id)).ToList();
+
+                // Filter articles by valid (active) selected categories
+                ActiveArticles = allArticles.Where(a => validSelectedCategoryIds.Contains(a.CategoryId));
+
+                // Update SelectedCategoryIds to only include valid ones
+                SelectedCategoryIds = validSelectedCategoryIds;
             }
             else
             {
-                ActiveArticles = allArticles;
+                // Show articles from active categories only
+                var activeCategoryIds = Categories.Select(c => c.CategoryId).ToList();
+                ActiveArticles = allArticles.Where(a => activeCategoryIds.Contains(a.CategoryId));
             }
         }
     }
